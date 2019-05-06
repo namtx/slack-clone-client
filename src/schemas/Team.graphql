@@ -1,0 +1,10 @@
+# import User from "./User.graphql"
+# import Channel from "./Channel.graphql"
+
+type Team {
+  id: Int!
+  name: String!
+  owner: User!
+  members: [User!]!
+  channels: [Channel!]!
+}

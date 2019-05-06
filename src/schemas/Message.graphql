@@ -1,0 +1,9 @@
+# import User from "./User.graphql"
+# import Channel from "./Channel.graphql"
+
+type Message {
+  id: Int!
+  text: String!
+  user: User!
+  channel: Channel!
+}
