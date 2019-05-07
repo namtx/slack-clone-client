@@ -1,4 +1,13 @@
 import bcrypt from 'bcrypt';
+import _ from 'lodash';
+import { tryLogin } from './utils/auth';
+
+const formatErrors = (e) => {
+  if (e.errors instanceof Array) {
+    return e.errors.map(x => _.pick(x, ['path', 'message']));
+  }
+  return [{ path: 'name', message: 'something went wrong' }];
+};
 
 export default {
   Query: {
@@ -11,15 +20,28 @@ export default {
       try {
         const hashedPassword = await bcrypt.hash(password, 12);
         const user = await models.User.create({ password: hashedPassword, ...otherArgs });
-        if (user) {
-          return true;
-        }
-        return false;
+        return {
+          ok: true,
+          user,
+        };
       } catch (error) {
-        return false;
+        return {
+          ok: false,
+          errors: formatErrors(error),
+        };
       }
     },
-
+    login: async (
+      parent,
+      {
+        email,
+        password,
+      },
+      {
+        models,
+        jwtSecret,
+      },
+    ) => tryLogin(email, password, models, jwtSecret),
     createTeam: async (parent, args, { models, user }) => {
       try {
         const team = await models.Team.create({ ...args, owner: user.id });

@@ -19,6 +19,7 @@ const server = new ApolloServer({
     user: {
       id: 1,
     },
+    jwtSecret: process.env.JWT_SECRET,
   },
 });
 
